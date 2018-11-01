@@ -1,33 +1,26 @@
-import static com.kms.katalon.core.checkpoint.CheckpointFactory.findCheckpoint
-import static com.kms.katalon.core.testcase.TestCaseFactory.findTestCase
-import static com.kms.katalon.core.testdata.TestDataFactory.findTestData
-import static com.kms.katalon.core.testobject.ObjectRepository.findTestObject
-import com.kms.katalon.core.checkpoint.Checkpoint as Checkpoint
-import com.kms.katalon.core.cucumber.keyword.CucumberBuiltinKeywords as CucumberKW
-import com.kms.katalon.core.mobile.keyword.MobileBuiltInKeywords as Mobile
-import com.kms.katalon.core.model.FailureHandling as FailureHandling
-import com.kms.katalon.core.testcase.TestCase as TestCase
-import com.kms.katalon.core.testdata.TestData as TestData
-import com.kms.katalon.core.testobject.TestObject as TestObject
-import com.kms.katalon.core.webservice.keyword.WSBuiltInKeywords as WS
+import org.openqa.selenium.By
+
+import com.bst.BstLoginPage
+import com.bst.Homepage
+import com.kms.katalon.core.webui.driver.DriverFactory
 import com.kms.katalon.core.webui.keyword.WebUiBuiltInKeywords as WebUI
-import internal.GlobalVariable as GlobalVariable
 
 WebUI.openBrowser('www.bstglobal.com')
+def driver = DriverFactory.getWebDriver()
 
 WebUI.maximizeWindow()
 
-WebUI.click(findTestObject('BST Global/LoginSupportLink'), FailureHandling.STOP_ON_FAILURE)
+Homepage home = new Homepage(driver)
 
-WebUI.sendKeys(findTestObject('BST Global/UsernameBox'), 'test')
+home.getLoginSupportLink().click()
 
-WebUI.sendKeys(findTestObject('BST Global/PasswordBox'), 'password')
+BstLoginPage login = new BstLoginPage(driver)
 
-WebUI.click(findTestObject('BST Global/LoginButton'))
-
-WebUI.getText(findTestObject('BST Global/LoginErrorMessage'))
-
-assert 'The username or password is incorrect. Forgot password?' == 'The username or password is incorrect. Forgot password?'
+login.getUsername().sendKeys("test")
+login.getPassword().sendKeys("password")
+login.getLoginButton().click()
+String errorMessage = driver.findElement(By.xpath("//div[@id='pnlLoginAlert']")).getText()
+assert 'The username or password is incorrect. Forgot password?' == errorMessage
 
 WebUI.closeBrowser()
 
